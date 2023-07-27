@@ -1,2 +1,2 @@
 # Machine-Learning
-My machine learning projects
+These are all of my machine learning projects/notebooks.
