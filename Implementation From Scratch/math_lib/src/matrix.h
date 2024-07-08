@@ -67,14 +67,14 @@ class Matrix {
         Matrix inverse() const;
 
         // Displays the matrix to console
-        void display();
+        void display() const;
     
     private:
         
         // 2D dynamic arrays to represent matrix
         vector<vector<double>>m;
 
-        double _det(const Matrix& matrix) const;
+        // double _det() const;
 };
 
 #endif // MATRIX_H

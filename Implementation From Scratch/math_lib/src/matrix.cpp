@@ -168,9 +168,20 @@ Matrix Matrix::concat(const Matrix& matrix, int axis) const {
 
         return temp;
     } else {  // axis=1
-        assert(getCols()==matrix.getCols()&&"Both matrices must have same number of columns to be concatenable along axis 1.");
+        // CAREFUL OF 0 COLUMNS CASE
+        //  Due to matrix being represented as 2d vector, 
+        //  - Possible for matrix to have non-zero rows but 0 columns
+        //  - Impossible for matrix to have 0 rows but non-zero columns
+        //  Thus we assume if a matrix has 0 columns, it has infinitely many columns
+        //  E.g. If matrix has 10 rows and 0 columns, and being concatenated along axis=1
+        //  with matrix with 100 rows and 10 columns, resulting matrix is just the ladder 
+        //  matrix.
+        //      BE CAREFUL IF THIS IS NOT THE DESIRED OUTCOME
 
-        Matrix temp = Matrix(getRows()+matrix.getRows(), getCols());
+        // printf("getCols, m.getCols, %d %d\n", getCols(), matrix.getCols());
+        assert((getCols()==0||matrix.getCols()==0||getCols()==matrix.getCols())&&"Both matrices must have same number of columns to be concatenable along axis 1.");
+
+        Matrix temp = Matrix(getRows()+matrix.getRows(), max(getCols(), matrix.getCols()));
         for(size_t i=0; i<getRows(); i++){
             for(size_t j=0; j<getCols(); j++){
                 temp[i][j]=m[i][j];
@@ -178,10 +189,19 @@ Matrix Matrix::concat(const Matrix& matrix, int axis) const {
         }
 
         for(size_t i=0; i<matrix.getRows(); i++){
-            for(size_t j=0; j<getCols(); j++){
+            for(size_t j=0; j<matrix.getCols(); j++){
                 temp[getRows()+i][j]=matrix[i][j];
             }
         }
+
+        // cout<<"CONCATING THE FOLLOWING<"<<endl;
+        // printf("dim1: %d %d\n", getRows(), getCols());
+        // display();
+        // cout<<"--"<<endl;
+        // printf("dim2: %d %d\n", matrix.getRows(), matrix.getCols());
+        // matrix.display();
+        // cout<<"RESULT:"<<endl;
+        // temp.display();
 
         return temp;
     }
@@ -189,35 +209,53 @@ Matrix Matrix::concat(const Matrix& matrix, int axis) const {
 }
 
 Matrix Matrix::concat(const Matrix& matrix) const{
+    // printf("concat successfully overloaded\n");
+
     return concat(matrix, 0);
 }
 
-double Matrix::det() const {
+// double Matrix::det() const {
 
-    assert(getRows()==getCols()&&"Number of rows must be equal to number of columns for determinant to exist.");
+//     assert(getRows()==getCols()&&"Number of rows must be equal to number of columns for determinant to exist.");
 
-    return _det(*this);
-}
+//     return _det();
+// }
 
 // Time complexity: O(n!)
 // Space complexity: O((n!)^2)
-double Matrix::_det(const Matrix& m) const {
+double Matrix::det() const {
 
-    assert(m.getRows()==m.getCols()&&"Number of rows must be equal to number of columns for determinant to exist.");
+    // printf("rows, cols: %d %d\n", getRows(), getCols());
+    assert(getRows()==getCols()&&"Number of rows must be equal to number of columns for determinant to exist.");
 
-    if(m.getRows()==1&&m.getCols()==1){
+    // display();
+
+    // printf("calcing determinant of: \n");
+
+    if(getRows()==1&&getCols()==1){
+        // printf("determinant of: \n");
+        // display();
+        // printf("is: %.2f\n", m[0][0]);
         return m[0][0];
     }
 
-    if(m.getRows()==2&&m.getCols()==2){
+    if(getRows()==2&&getCols()==2){
+        // printf("determinant of: \n");
+        // display();
+        // printf("is: %.2f\n", m[0][0]*m[1][1]-m[0][1]*m[1][0]);
         return m[0][0]*m[1][1]-m[0][1]*m[1][0];
     }
 
     double val=0;
 
-    for(int j=0; j<m.getCols(); j++){
-        val+=-1*(j%2==1)*m[0][j]*_det(m.slice(1, m.getRows(), 0, j).concat(m.slice(1, m.getRows(), j, m.getCols())));
+    for(int j=0; j<getCols(); j++){
+        Matrix temp=slice(1, getRows(), 0, j).concat(slice(1, getRows(), j+1, getCols()));
+        val+=(j%2==1?-1:1)*m[0][j]*temp.det();
     }
+
+    // printf("determinant of: \n");
+    // display();
+    // printf("is: %.2f\n", val);
 
     return val;
 }
@@ -228,8 +266,15 @@ double Matrix::minor(size_t row, size_t col) const {
     Matrix bottom_left = slice(row+1, getRows(), 0, col);
     Matrix bottom_right = slice(row+1, getRows(), col+1, getCols());
  
+    // printf("minor coords: %d %d\n", row, col);
+    // Matrix top_conc = top_left.concat(top_right);
+    // Matrix bottom_conc = bottom_left.concat(bottom_right);
+    // printf("top_conc dim: %d %d\n", top_conc.getRows(), top_conc.getCols());
+    // printf("bottom_conc dim: %d %d\n", bottom_conc.getRows(), bottom_conc.getCols());
+    // Matrix temp = top_conc.concat(bottom_conc, 1);
     Matrix temp = top_left.concat(top_right).concat(bottom_left.concat(bottom_right), 1);
-    return _det(temp);
+    // printf("minor of matrix at %d %d is %d\n", row ,col, temp.det());
+    return temp.det();
 }
 
 double Matrix::cofactor(size_t row, size_t col) const{
@@ -245,6 +290,9 @@ Matrix Matrix::adjoint() const{
         }
     }
 
+    // cout<<"Adjoint of matrix:"<<endl;
+    // temp.T().display();
+
     return temp.T();
 }
 
@@ -253,13 +301,15 @@ Matrix Matrix::inverse() const{
     assert(getRows()==getCols()&&"Inverse only exists for square matrices.");
 
     double determinant = det();
+    // printf("determinant: %.2f\n", determinant);
+    // printf("done calcing det for inverse\n");
     assert(determinant!=0.0&&"Determinant of matrix is 0, so inverse doesn't exist.");
 
     Matrix temp = (1.0/((double)determinant))*adjoint();
     return temp;
 }
 
-void Matrix::display(){
+void Matrix::display() const {
     for(int i=0; i<getRows(); i++){
         for(int j=0; j<getCols(); j++){
             cout<<m[i][j]<<" ";
@@ -288,16 +338,37 @@ void solution(){
     // (m*m2).display();
     // (m2*m3).display();
 
+    // vector<vector<double>>arr = {
+    //     {1, -2, 3},
+    //     {2, 0, 3},
+    //     {1, 5, 4},
+    // };
+    // vector<vector<double>>arr = {
+    //     {1, 2, 0},
+    //     {3, -1, 2},
+    //     {-2, 3, -2},
+    // };
+    // vector<vector<double>>arr = {
+    //     {5, 6, 6, 8},
+    //     {2, 2, 2, 8},
+    //     {6, 6, 2, 8},
+    //     {2, 3, 6, 7}
+    // };
     vector<vector<double>>arr = {
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9},
+        {1, 0, 4, 6},
+        {2, 5, 0, 3},
+        {-1, 2, 3, 5},
+        {2, 1, -2, 3}
     };
     Matrix m = Matrix(arr);
 
     m.T().display();
 
-    m.inverse().display();
+    Matrix temp=m.inverse();
+    printf("inverse of m is: \n");
+    temp.display();
+    printf("following should be identity matrix: \n");
+    (m*temp).display();
 }
 
 
