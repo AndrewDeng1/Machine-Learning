@@ -1,0 +1,5 @@
+C:/Users/andar/Machine-Learning/Implementation From Scratch/build/CMakeFiles/math_lib.dir
+C:/Users/andar/Machine-Learning/Implementation From Scratch/build/CMakeFiles/models.dir
+C:/Users/andar/Machine-Learning/Implementation From Scratch/build/CMakeFiles/main.dir
+C:/Users/andar/Machine-Learning/Implementation From Scratch/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/andar/Machine-Learning/Implementation From Scratch/build/CMakeFiles/ZERO_CHECK.dir

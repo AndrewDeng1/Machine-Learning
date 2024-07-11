@@ -2,10 +2,16 @@
 #define LINEAR_REGRESSION_H
 
 #include <vector>
+#include <iostream>
+#include <stdexcept>
+#include <cmath>
+#include <algorithm>
+#include <cassert>
 
-#include<bits/stdc++.h>
-
-#include <math_lib/matrix.h>
+// #include "../../../math_lib/src/matrix.h"
+// #include <math_lib/src/matrix.h>
+#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\math_lib.h"
+#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\matrix.h"
 
 using namespace std;
 
@@ -17,13 +23,13 @@ class LinearRegression {
         LinearRegression();
 
         // Normal Equation method
-        void fit_closed_form(Matrix& X, vector<double>& y);
+        void fit_closed_form(const Matrix& X, const vector<double>& y);
     
         // Predict method
-        vector predict(Matrix& X);
+        vector<double> predict(const Matrix& X) const;
 
         // Inference method
-        double inference(vector& x);
+        double inference(const vector<double>& x) const;
 
     private:
         

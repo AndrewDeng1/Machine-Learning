@@ -2,7 +2,13 @@
 
 Matrix::Matrix(size_t rows, size_t cols): m(vector<vector<double>>(rows, vector<double>(cols, 0))){}
 
-Matrix::Matrix(vector<vector<double>>&arr): m(arr){}
+Matrix::Matrix(const vector<vector<double>>&arr): m(arr){}
+
+Matrix::Matrix(const vector<double>&arr): m(vector<vector<double>>(arr.size(), vector<double>(1, 0))){
+    for(size_t i=0; i<arr.size(); i++){
+        m[i][0]=arr[i];
+    }
+}
 
 // "const" indicates method isn't allowed to modify member variables, and can only access other "const" methods
 size_t Matrix::getRows() const {
@@ -24,7 +30,7 @@ const vector<double>& Matrix::operator[](size_t row) const {
     return m[row];
 }
 
-Matrix Matrix::operator+(Matrix& matrix) const {
+Matrix Matrix::operator+(const Matrix& matrix) const {
 
     assert(getRows()==matrix.getRows()&&"Matrices must have same number of rows.");
     assert(getCols()==matrix.getCols()&&"Matrices must have same number of columns.");
@@ -39,7 +45,7 @@ Matrix Matrix::operator+(Matrix& matrix) const {
     return temp;
 }
 
-Matrix Matrix::operator-(Matrix& matrix) const {
+Matrix Matrix::operator-(const Matrix& matrix) const {
 
     assert(getRows()==matrix.getRows()&&"Matrices must have same number of rows.");
     assert(getCols()==matrix.getCols()&&"Matrices must have same number of columns.");
@@ -54,7 +60,7 @@ Matrix Matrix::operator-(Matrix& matrix) const {
     return temp;
 }
 
-Matrix Matrix::operator*(Matrix& matrix) const {
+Matrix Matrix::operator*(const Matrix& matrix) const {
 
     assert(getCols()==matrix.getRows()&&"A must have as many columns as B has rows.");
 
@@ -68,6 +74,22 @@ Matrix Matrix::operator*(Matrix& matrix) const {
     }
 
     return temp;
+}
+
+double Matrix::dot(const Matrix& matrix) const {
+
+    assert(getCols()==matrix.getRows()&&getRows()==1&&matrix.getCols()==1&&"Dot product only exists for two vector-shaped matrices of shape 1 x n and n x 1, respectively.");
+
+    Matrix temp = Matrix(getRows(), matrix.getCols());
+    for(int i=0; i<getRows(); i++){
+        for(int j=0; j<matrix.getCols(); j++){
+            for(int x=0; x<getCols(); x++){
+                temp[i][j]+=m[i][x]*matrix[x][j];
+            }
+        }
+    }
+
+    return temp[0][0];
 }
 
 Matrix Matrix::operator*(double k) const {
@@ -94,19 +116,19 @@ Matrix operator*(double k, const Matrix& m) {
     return temp;
 }
 
-vector<double> Matrix::operator*(vector<double>& vec){
+// vector<double> Matrix::operator*(const vector<double>& vec) const {
 
-    assert(getCols()==vec.size()&&"Matrix columns must be equal to vector size.");
+//     assert(getCols()==vec.size()&&"Matrix columns must be equal to vector size.");
 
-    vector<double> temp(getRows(), 0);
-    for(int i=0; i<getRows(); i++){
-        for(int j=0; j<getCols(); j++){
-            temp[i]+=m[i][j]*vec[j];
-        }
-    }
+//     vector<double> temp(getRows(), 0);
+//     for(int i=0; i<getRows(); i++){
+//         for(int j=0; j<getCols(); j++){
+//             temp[i]+=m[i][j]*vec[j];
+//         }
+//     }
 
-    return temp;
-}
+//     return temp;
+// }
 
 Matrix Matrix::slice(size_t row_start, size_t row_end, size_t col_start, size_t col_end) const {
 
@@ -122,7 +144,7 @@ Matrix Matrix::slice(size_t row_start, size_t row_end, size_t col_start, size_t 
     return temp;
 }
 
-Matrix Matrix::T(){
+Matrix Matrix::T() const {
     
     Matrix temp = Matrix(getCols(), getRows());
 
@@ -300,13 +322,26 @@ Matrix Matrix::inverse() const{
     
     assert(getRows()==getCols()&&"Inverse only exists for square matrices.");
 
+
     double determinant = det();
-    // printf("determinant: %.2f\n", determinant);
-    // printf("done calcing det for inverse\n");
+    printf("determinant: %.2f\n", determinant);
+    printf("done calcing det for inverse\n");
     assert(determinant!=0.0&&"Determinant of matrix is 0, so inverse doesn't exist.");
 
     Matrix temp = (1.0/((double)determinant))*adjoint();
     return temp;
+}
+
+vector<double> Matrix::toVec() const {
+
+    assert(getCols()==1&&"Matrix must be in vector form (n x 1) to convert to vector.");
+
+    vector<double>ret;
+    for(size_t i=0; i<getRows(); i++){
+        ret.push_back(m[i][0]);
+    }
+
+    return ret;
 }
 
 void Matrix::display() const {
@@ -319,63 +354,63 @@ void Matrix::display() const {
 }
 
 
-void solution(){
-    // Matrix m = Matrix(2, 2);
-    // vector<vector<double>>arr1 = {{1, 2}, {3, 4}};
-    // vector<vector<double>>arr2 = {{1, 2}, {3, 5}};
+// void solution(){
+//     // Matrix m = Matrix(2, 2);
+//     // vector<vector<double>>arr1 = {{1, 2}, {3, 4}};
+//     // vector<vector<double>>arr2 = {{1, 2}, {3, 5}};
 
-    // Matrix m2 = Matrix(arr1);
-    // Matrix m3 = Matrix(arr2);
+//     // Matrix m2 = Matrix(arr1);
+//     // Matrix m3 = Matrix(arr2);
 
-    // m.display();
-    // m2.display();
-    // m3.display();
+//     // m.display();
+//     // m2.display();
+//     // m3.display();
 
-    // (m+m2).display();
-    // (m2+m3).display();
-    // (m-m2).display();
-    // (m2-m3).display();
-    // (m*m2).display();
-    // (m2*m3).display();
+//     // (m+m2).display();
+//     // (m2+m3).display();
+//     // (m-m2).display();
+//     // (m2-m3).display();
+//     // (m*m2).display();
+//     // (m2*m3).display();
 
-    // vector<vector<double>>arr = {
-    //     {1, -2, 3},
-    //     {2, 0, 3},
-    //     {1, 5, 4},
-    // };
-    // vector<vector<double>>arr = {
-    //     {1, 2, 0},
-    //     {3, -1, 2},
-    //     {-2, 3, -2},
-    // };
-    // vector<vector<double>>arr = {
-    //     {5, 6, 6, 8},
-    //     {2, 2, 2, 8},
-    //     {6, 6, 2, 8},
-    //     {2, 3, 6, 7}
-    // };
-    vector<vector<double>>arr = {
-        {1, 0, 4, 6},
-        {2, 5, 0, 3},
-        {-1, 2, 3, 5},
-        {2, 1, -2, 3}
-    };
-    Matrix m = Matrix(arr);
+//     // vector<vector<double>>arr = {
+//     //     {1, -2, 3},
+//     //     {2, 0, 3},
+//     //     {1, 5, 4},
+//     // };
+//     // vector<vector<double>>arr = {
+//     //     {1, 2, 0},
+//     //     {3, -1, 2},
+//     //     {-2, 3, -2},
+//     // };
+//     // vector<vector<double>>arr = {
+//     //     {5, 6, 6, 8},
+//     //     {2, 2, 2, 8},
+//     //     {6, 6, 2, 8},
+//     //     {2, 3, 6, 7}
+//     // };
+//     vector<vector<double>>arr = {
+//         {1, 0, 4, 6},
+//         {2, 5, 0, 3},
+//         {-1, 2, 3, 5},
+//         {2, 1, -2, 3}
+//     };
+//     Matrix m = Matrix(arr);
 
-    m.T().display();
+//     m.T().display();
 
-    Matrix temp=m.inverse();
-    printf("inverse of m is: \n");
-    temp.display();
-    printf("following should be identity matrix: \n");
-    (m*temp).display();
-}
+//     Matrix temp=m.inverse();
+//     printf("inverse of m is: \n");
+//     temp.display();
+//     printf("following should be identity matrix: \n");
+//     (m*temp).display();
+// }
 
 
 
-int main(){
-    ios::sync_with_stdio(0);
-    cin.tie(0);
+// int main(){
+//     ios::sync_with_stdio(0);
+//     cin.tie(0);
 
-    solution();
-}
+//     solution();
+// }

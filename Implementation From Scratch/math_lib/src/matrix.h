@@ -2,8 +2,11 @@
 #define MATRIX_H
 
 #include <vector>
-
-#include<bits/stdc++.h>
+#include <iostream>
+#include <stdexcept>
+#include <cmath>
+#include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -13,7 +16,8 @@ class Matrix {
 
         // Declare signature of constructor methods
         Matrix(size_t rows, size_t cols);
-        Matrix(vector<vector<double>>& arr);
+        Matrix(const vector<vector<double>>& arr);
+        Matrix(const vector<double>& arr);
 
         // Gets number of rows/cols of Matrix
         size_t getRows() const;
@@ -24,22 +28,25 @@ class Matrix {
         const vector<double>& operator[](size_t row) const;
 
         // Addition
-        Matrix operator+(Matrix& matrix) const;
+        Matrix operator+(const Matrix& matrix) const;
 
         // Subtraction
-        Matrix operator-(Matrix& matrix) const;
+        Matrix operator-(const Matrix& matrix) const;
 
         // Matrix multiplication
-        Matrix operator*(Matrix& matrix) const;
+        Matrix operator*(const Matrix& matrix) const;
+
+        // Dot product on two vector-shaped matrices, of shape 1 x n and n x 1, respectively
+        double dot(const Matrix& matrix) const;
 
         // Scalar multiply
         Matrix operator*(double n) const;
 
         // Vector multiply
-        vector<double> operator*(vector<double>& vec);
+        vector<double> operator*(const vector<double>& vec) const;
 
         // Transpose
-        Matrix T();
+        Matrix T() const;
 
         // Concatenates matrices horizontally
         Matrix concat(const Matrix& matrix, int axis) const;
@@ -65,6 +72,9 @@ class Matrix {
 
         // Inverse of matrix
         Matrix inverse() const;
+
+        // Returns the std::vector equivalent of this Matrix, if it is in vector form (n x 1)
+        vector<double> toVec() const;
 
         // Displays the matrix to console
         void display() const;
