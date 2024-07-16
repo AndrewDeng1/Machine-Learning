@@ -1,4 +1,6 @@
 #include "matrix.h"
+#include <stdlib.h>
+#include <time.h>
 
 Matrix::Matrix(size_t rows, size_t cols): m(vector<vector<double>>(rows, vector<double>(cols, 0))){}
 
@@ -78,6 +80,7 @@ Matrix Matrix::operator*(const Matrix& matrix) const {
 
 double Matrix::dot(const Matrix& matrix) const {
 
+    printf("%d %d, %d %d\n", getCols(), getRows(), matrix.getRows(), matrix.getCols());
     assert(getCols()==matrix.getRows()&&getRows()==1&&matrix.getCols()==1&&"Dot product only exists for two vector-shaped matrices of shape 1 x n and n x 1, respectively.");
 
     Matrix temp = Matrix(getRows(), matrix.getCols());
@@ -142,6 +145,59 @@ Matrix Matrix::slice(size_t row_start, size_t row_end, size_t col_start, size_t 
     }
 
     return temp;
+}
+
+Matrix Matrix::sample(size_t n, size_t axis) const {
+
+    assert((axis==0||axis==1)&&"Axis must be an integer between 0 and 1 inclusive.");
+
+    if(axis==0){
+
+        assert(n<=getRows()&&"Number of rows to sample must be less than or equal to number of rows in matrix.");
+
+        Matrix ret = Matrix(n, getCols());
+
+        srand(time(NULL));
+
+        vector<bool>seen(getRows(), false);
+
+        size_t cnt=0;
+        while(cnt<getRows()){
+            int idx=rand()%getRows();
+            if(!seen[idx]){
+                seen[idx]=true;
+                for(size_t col=0; col<getCols(); col++){
+                    ret[cnt][col]=m[idx][col];
+                }
+                cnt++;
+            }
+        }
+
+        return ret;
+    } else {
+
+        assert(n<=getCols()&&"Number of columns to sample must be less than or equal to number of columns in matrix.");
+
+        Matrix ret = Matrix(getRows(), n);
+
+        srand(time(NULL));
+
+        vector<bool>seen(getCols(), false);
+
+        size_t cnt=0;
+        while(cnt<getCols()){
+            int idx=rand()%getCols();
+            if(!seen[idx]){
+                seen[idx]=true;
+                for(size_t i=0; i<getRows(); i++){
+                    ret[i][cnt]=m[i][idx];
+                }
+                cnt++;
+            }
+        }
+
+        return ret;
+    }
 }
 
 Matrix Matrix::T() const {

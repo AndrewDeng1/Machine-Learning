@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add the math_lib library
 add_library(math_lib
     math_lib/src/matrix.cpp
+    math_lib/src/math_lib.cpp
     # Add other source files for math_lib here
 )
 
@@ -19,6 +20,7 @@ target_include_directories(math_lib PUBLIC math_lib/include)
 # Add the models library
 add_library(models
     models/src/Linear\ Regression/Normal\ Equation/linear_regression.cpp
+    models/src/Logistic\ Regression/logistic_regression.cpp
     # Add other source files for models here
 )
 

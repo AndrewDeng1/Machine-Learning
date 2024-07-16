@@ -4,6 +4,9 @@
     <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Linear Regression\Normal Equation\linear_regression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Logistic Regression\logistic_regression.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\CMakeLists.txt" />

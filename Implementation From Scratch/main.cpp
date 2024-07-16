@@ -2,12 +2,49 @@
 using namespace std;
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
+#include <string>
 
 #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\models.h"
 #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\matrix.h"
+#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\math_lib.h"
 #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Linear Regression\Normal Equation\linear_regression.h"
+#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Logistic Regression\logistic_regression.h"
 
+vector<vector<double>> parseCSV(const string& filename) {
+    vector<vector<double>> data;
+    ifstream file(filename);
+    
+    if (!file.is_open()) {
+        throw runtime_error("Could not open file");
+    }
+
+    // Remove feature titles
+    string line;
+
+    getline(file, line);
+
+    while (getline(file, line)) {
+        vector<double> row;
+        stringstream ss(line);
+        string value;
+        getline(ss, value, ',');
+        while (getline(ss, value, ',')) {
+            try {
+                row.push_back(stod(value));
+            } catch (const invalid_argument& e) {
+                throw runtime_error("Invalid value found in the file: " + value);
+            }
+        }
+
+        data.push_back(row);
+    }
+
+    file.close();
+    return data;
+}
 
 void solution(){
     // Matrix m = Matrix(2, 2);
@@ -33,13 +70,27 @@ void solution(){
     //     {2.0, 0.0, 3.0},
     //     {1.0, 5.0, 4.0},
     // };
-    vector<vector<double>>arr = {
-        {1.0, -2.0, 3.0},
-        {2.0, -1.0, 3.0},
-        {1.0, 5.0, -4.0},
-    };
 
-    vector<double> y = {2.0, 5.0, 10.0};
+    // NICE TEST FOR LINEAR REGRESSION
+    // vector<vector<double>>arr = {
+    //     {1.0, -2.0, 3.0},
+    //     {2.0, -1.0, 3.0},
+    //     {1.0, 5.0, -4.0},
+    // };
+
+    // vector<double> y = {1.0, 5.0, 10.0};
+    // NICE TEST FOR LINEAR REGRESSION
+
+    //     {1.0, -2.0, -10.0},
+    //     {2.0, -5.0, 5.0},
+    //     {1.0, 5.0, 4.0},
+    // };
+
+    // vector<double> y = {0.0, 1.0, 1.0};
+    // vector<double> x = {-13.0, -14.0, -15.0};
+    // NICE TEST FOR LOGISTIC REGRESSION
+
+    // vector<vector<double>>arr = {
 
     // vector<vector<double>>arr = {
     //     {1.0, 2.0, 3.0},
@@ -50,14 +101,25 @@ void solution(){
 
     // vector<double> y = {6.0, 15.0, 24.0, 33.0};
 
-    Matrix X = Matrix(arr);
+    vector<vector<double>> arr = parseCSV("C:\\Users\\andar\\Machine-Learning\\Implementation From Scratch\\data\\real_estate_linear_regression_data.csv");
+    Matrix temp=Matrix(arr);
 
-    LinearRegression lr = LinearRegression();
-    lr.fit_closed_form(X, y);
+    // temp.display();
 
-    vector<double> x = {13.0, 14.0, 15.0};
+    int NUM_TEST_CASE=50;
 
-    cout << lr.inference(x) << endl;
+    Matrix X_train = temp.slice(0, temp.getRows()-NUM_TEST_CASE, 0, temp.getCols()-1);
+    Matrix y_train = temp.slice(0, temp.getRows()-NUM_TEST_CASE, temp.getCols()-1, temp.getCols());
+    Matrix X_test = temp.slice(temp.getRows()-NUM_TEST_CASE, temp.getRows(), 0, temp.getCols()-1);
+    Matrix y_test = temp.slice(temp.getRows()-NUM_TEST_CASE, temp.getRows(), temp.getCols()-1, temp.getCols());
+
+
+    LogisticRegression lr = LogisticRegression();
+    lr.fit_gradient_descent(X_train, y_train, 100, 0.01);
+    cout<<"finished gd"<<endl;
+    Matrix y_pred = lr.predict(X_test);
+
+    cout<<math_lib::average_error(y_test, y_pred)<<endl;
 }
 
 int main(){

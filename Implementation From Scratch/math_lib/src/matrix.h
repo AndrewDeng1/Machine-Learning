@@ -58,6 +58,9 @@ class Matrix {
         // Returns a slice of the matrix
         Matrix slice(size_t row_start, size_t row_end, size_t col_start, size_t col_end) const;
 
+        // Samples rows/columns
+        Matrix sample(size_t n, size_t axis) const;
+
         // Returns the determinant of the matrix
         double det() const;
 
@@ -86,5 +89,7 @@ class Matrix {
 
         // double _det() const;
 };
+
+Matrix operator*(double k, const Matrix& m);
 
 #endif // MATRIX_H

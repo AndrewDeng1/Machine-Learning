@@ -4,6 +4,9 @@
     <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\math_lib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\CMakeLists.txt" />
