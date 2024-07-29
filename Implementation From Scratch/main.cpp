@@ -7,11 +7,17 @@ using namespace std;
 #include <vector>
 #include <string>
 
-#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\models.h"
-#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\matrix.h"
-#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\math_lib.h"
-#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Linear Regression\Normal Equation\linear_regression.h"
-#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Logistic Regression\logistic_regression.h"
+#include "models\src\models.h"
+#include "math_lib\src\math_lib.h"
+// #include "math_lib\src\matrix.h"
+// #include "models\src\Linear Regression\linear_regression.h"
+// #include "models\src\Logistic Regression\logistic_regression.h"
+// #include "models\src\models.h"
+// #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\models.h"
+// #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\matrix.h"
+// #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\math_lib.h"
+// #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Linear Regression\linear_regression.h"
+// #include "C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Logistic Regression\logistic_regression.h"
 
 vector<vector<double>> parseCSV(const string& filename) {
     vector<vector<double>> data;
@@ -44,6 +50,17 @@ vector<vector<double>> parseCSV(const string& filename) {
 
     file.close();
     return data;
+}
+
+double average_error(const Matrix& y_true, const Matrix& y_pred) {
+
+    assert(y_true.getRows() == y_pred.getRows()&&y_true.getCols()==1&&y_pred.getCols()==1&&"y_true and y_pred must both be vector shape (nx1) and have equal number of rows.");
+
+    double error = 0;
+    for (size_t i = 0; i < y_true.getRows(); i++) {
+        error += abs(y_true[i][0] - y_pred[i][0]);
+    }
+    return error / y_true.getRows();
 }
 
 void solution(){
@@ -101,6 +118,10 @@ void solution(){
 
     // vector<double> y = {6.0, 15.0, 24.0, 33.0};
 
+
+    // test_linear_regression();
+
+
     vector<vector<double>> arr = parseCSV("C:\\Users\\andar\\Machine-Learning\\Implementation From Scratch\\data\\real_estate_linear_regression_data.csv");
     Matrix temp=Matrix(arr);
 
@@ -113,13 +134,29 @@ void solution(){
     Matrix X_test = temp.slice(temp.getRows()-NUM_TEST_CASE, temp.getRows(), 0, temp.getCols()-1);
     Matrix y_test = temp.slice(temp.getRows()-NUM_TEST_CASE, temp.getRows(), temp.getCols()-1, temp.getCols());
 
+    LinearRegression lin_reg = LinearRegression();
+    lin_reg.fit_closed_form(X_train, y_train);
+    // LogisticRegression lr = LogisticRegression();
+    // lr.fit_gradient_descent(X_train, y_train, 100, 0.01);
+    // cout<<"finished gd"<<endl;
+    Matrix y_pred = lin_reg.predict(X_test);
 
-    LogisticRegression lr = LogisticRegression();
-    lr.fit_gradient_descent(X_train, y_train, 100, 0.01);
-    cout<<"finished gd"<<endl;
-    Matrix y_pred = lr.predict(X_test);
+    cout<<"weights"<<endl;
+    lin_reg.getW().display();
 
-    cout<<math_lib::average_error(y_test, y_pred)<<endl;
+    cout<<"average error"<<endl;
+    cout<<average_error(y_test, y_pred)<<endl;
+
+    vector<vector<double>>x = {
+        {13.3,4082.015,8,25.00705868353470,121.56169421770800},
+        {35.5,274.0144,2,25.012148257650200,121.54698984457100},
+        {1.1,1978.671,10,25.003849862836500,121.52833647288200}
+    };
+    for(auto i:x){
+        cout<<lin_reg.inference(i)<<endl;
+    }
+
+    cout<<"boo"<<endl;
 }
 
 int main(){

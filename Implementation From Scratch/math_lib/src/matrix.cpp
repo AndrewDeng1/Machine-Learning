@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+Matrix::Matrix(): m(vector<vector<double>>(0, vector<double>(0, 0))){}
+
 Matrix::Matrix(size_t rows, size_t cols): m(vector<vector<double>>(rows, vector<double>(cols, 0))){}
 
-Matrix::Matrix(const vector<vector<double>>&arr): m(arr){}
+Matrix::Matrix(const vector<vector<double>>arr): m(arr){}
 
-Matrix::Matrix(const vector<double>&arr): m(vector<vector<double>>(arr.size(), vector<double>(1, 0))){
+Matrix::Matrix(const vector<double>arr): m(vector<vector<double>>(arr.size(), vector<double>(1, 0))){
     for(size_t i=0; i<arr.size(); i++){
         m[i][0]=arr[i];
     }
@@ -80,7 +82,6 @@ Matrix Matrix::operator*(const Matrix& matrix) const {
 
 double Matrix::dot(const Matrix& matrix) const {
 
-    printf("%d %d, %d %d\n", getCols(), getRows(), matrix.getRows(), matrix.getCols());
     assert(getCols()==matrix.getRows()&&getRows()==1&&matrix.getCols()==1&&"Dot product only exists for two vector-shaped matrices of shape 1 x n and n x 1, respectively.");
 
     Matrix temp = Matrix(getRows(), matrix.getCols());
@@ -118,20 +119,6 @@ Matrix operator*(double k, const Matrix& m) {
 
     return temp;
 }
-
-// vector<double> Matrix::operator*(const vector<double>& vec) const {
-
-//     assert(getCols()==vec.size()&&"Matrix columns must be equal to vector size.");
-
-//     vector<double> temp(getRows(), 0);
-//     for(int i=0; i<getRows(); i++){
-//         for(int j=0; j<getCols(); j++){
-//             temp[i]+=m[i][j]*vec[j];
-//         }
-//     }
-
-//     return temp;
-// }
 
 Matrix Matrix::slice(size_t row_start, size_t row_end, size_t col_start, size_t col_end) const {
 
@@ -213,17 +200,6 @@ Matrix Matrix::T() const {
     return temp;
 }
 
-// Matrix vector::T(){
-
-//     Matrix temp = Matrix(1, size());
-
-//     for(int i=0; i<size(); i++){
-//         temp[0][i]=v[i];
-//     }
-
-//     return temp;
-// }
-
 Matrix Matrix::concat(const Matrix& matrix, int axis) const {
 
     assert(axis>=0&&axis<=1&&"Axis must be an integer between 0 and 1 inclusive.");
@@ -272,55 +248,26 @@ Matrix Matrix::concat(const Matrix& matrix, int axis) const {
             }
         }
 
-        // cout<<"CONCATING THE FOLLOWING<"<<endl;
-        // printf("dim1: %d %d\n", getRows(), getCols());
-        // display();
-        // cout<<"--"<<endl;
-        // printf("dim2: %d %d\n", matrix.getRows(), matrix.getCols());
-        // matrix.display();
-        // cout<<"RESULT:"<<endl;
-        // temp.display();
-
         return temp;
     }
     
 }
 
 Matrix Matrix::concat(const Matrix& matrix) const{
-    // printf("concat successfully overloaded\n");
-
     return concat(matrix, 0);
 }
-
-// double Matrix::det() const {
-
-//     assert(getRows()==getCols()&&"Number of rows must be equal to number of columns for determinant to exist.");
-
-//     return _det();
-// }
 
 // Time complexity: O(n!)
 // Space complexity: O((n!)^2)
 double Matrix::det() const {
 
-    // printf("rows, cols: %d %d\n", getRows(), getCols());
     assert(getRows()==getCols()&&"Number of rows must be equal to number of columns for determinant to exist.");
 
-    // display();
-
-    // printf("calcing determinant of: \n");
-
     if(getRows()==1&&getCols()==1){
-        // printf("determinant of: \n");
-        // display();
-        // printf("is: %.2f\n", m[0][0]);
         return m[0][0];
     }
 
     if(getRows()==2&&getCols()==2){
-        // printf("determinant of: \n");
-        // display();
-        // printf("is: %.2f\n", m[0][0]*m[1][1]-m[0][1]*m[1][0]);
         return m[0][0]*m[1][1]-m[0][1]*m[1][0];
     }
 
@@ -330,11 +277,7 @@ double Matrix::det() const {
         Matrix temp=slice(1, getRows(), 0, j).concat(slice(1, getRows(), j+1, getCols()));
         val+=(j%2==1?-1:1)*m[0][j]*temp.det();
     }
-
-    // printf("determinant of: \n");
-    // display();
-    // printf("is: %.2f\n", val);
-
+    
     return val;
 }
 
@@ -344,15 +287,7 @@ double Matrix::minor(size_t row, size_t col) const {
     Matrix bottom_left = slice(row+1, getRows(), 0, col);
     Matrix bottom_right = slice(row+1, getRows(), col+1, getCols());
  
-    // printf("minor coords: %d %d\n", row, col);
-    // Matrix top_conc = top_left.concat(top_right);
-    // Matrix bottom_conc = bottom_left.concat(bottom_right);
-    // printf("top_conc dim: %d %d\n", top_conc.getRows(), top_conc.getCols());
-    // printf("bottom_conc dim: %d %d\n", bottom_conc.getRows(), bottom_conc.getCols());
-    // Matrix temp = top_conc.concat(bottom_conc, 1);
-    Matrix temp = top_left.concat(top_right).concat(bottom_left.concat(bottom_right), 1);
-    // printf("minor of matrix at %d %d is %d\n", row ,col, temp.det());
-    return temp.det();
+    return top_left.concat(top_right).concat(bottom_left.concat(bottom_right), 1).det();
 }
 
 double Matrix::cofactor(size_t row, size_t col) const{
@@ -368,9 +303,6 @@ Matrix Matrix::adjoint() const{
         }
     }
 
-    // cout<<"Adjoint of matrix:"<<endl;
-    // temp.T().display();
-
     return temp.T();
 }
 
@@ -380,12 +312,11 @@ Matrix Matrix::inverse() const{
 
 
     double determinant = det();
-    printf("determinant: %.2f\n", determinant);
-    printf("done calcing det for inverse\n");
+    // printf("Determinant: %.2f\n", determinant);
+
     assert(determinant!=0.0&&"Determinant of matrix is 0, so inverse doesn't exist.");
 
-    Matrix temp = (1.0/((double)determinant))*adjoint();
-    return temp;
+    return (1.0/((double)determinant))*adjoint();
 }
 
 vector<double> Matrix::toVec() const {

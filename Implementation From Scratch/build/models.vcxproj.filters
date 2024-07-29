@@ -1,10 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Linear Regression\Normal Equation\linear_regression.cpp">
+    <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Linear Regression\linear_regression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\Logistic Regression\logistic_regression.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\K-Nearest Neighbors\knn_regressor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\andar\Machine-Learning\Implementation From Scratch\models\src\K-Nearest Neighbors\knn_classifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

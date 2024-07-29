@@ -15,9 +15,10 @@ class Matrix {
     public:
 
         // Declare signature of constructor methods
+        Matrix();
         Matrix(size_t rows, size_t cols);
-        Matrix(const vector<vector<double>>& arr);
-        Matrix(const vector<double>& arr);
+        Matrix(const vector<vector<double>> arr);
+        Matrix(const vector<double> arr);
 
         // Gets number of rows/cols of Matrix
         size_t getRows() const;
@@ -52,9 +53,6 @@ class Matrix {
         Matrix concat(const Matrix& matrix, int axis) const;
         Matrix concat(const Matrix& matrix) const;
 
-        // // Stacks matrices vertically
-        // Matrix stack(Matrix& matrix);
-
         // Returns a slice of the matrix
         Matrix slice(size_t row_start, size_t row_end, size_t col_start, size_t col_end) const;
 
@@ -86,8 +84,6 @@ class Matrix {
         
         // 2D dynamic arrays to represent matrix
         vector<vector<double>>m;
-
-        // double _det() const;
 };
 
 Matrix operator*(double k, const Matrix& m);

@@ -8,10 +8,8 @@
 #include <algorithm>
 #include <cassert>
 
-// #include "../../../math_lib/src/matrix.h"
-// #include <math_lib/src/matrix.h>
-#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\math_lib.h"
-#include "C:\Users\andar\Machine-Learning\Implementation From Scratch\math_lib\src\matrix.h"
+#include "..\..\..\math_lib\src\math_lib.h"
+#include "..\..\..\math_lib\src\matrix.h"
 
 using namespace std;
 
@@ -22,13 +20,19 @@ class LogisticRegression {
         // Declare signature of constructor methods
         LogisticRegression();
 
+        // Returns weight matrix
+        Matrix getW() const;
+
+        // Sets weights matrix
+        void setW(Matrix m);
+
         // Gradient descent
-        void fit_gradient_descent(const Matrix& X, const Matrix& y, size_t epochs, double learning_rate);
-        void fit_gradient_descent(const Matrix& X, const vector<double>& y, size_t epochs, double learning_rate);
+        void fit_gradient_descent(const Matrix& X, const Matrix& y, double learning_rate, size_t epochs);
+        void fit_gradient_descent(const Matrix& X, const vector<double>& y, double learning_rate, size_t epochs);
     
         // Stochastic gradient descent
-        void fit_stochastic_gradient_descent(const Matrix& X, const Matrix& y, size_t epochs, double learning_rate, size_t mini_batch_size);
-        void fit_stochastic_gradient_descent(const Matrix& X, const vector<double>& y, size_t epochs, double learning_rate, size_t mini_batch_size);
+        void fit_stochastic_gradient_descent(const Matrix& X, const Matrix& y, double learning_rate, size_t epochs, size_t mini_batch_size);
+        void fit_stochastic_gradient_descent(const Matrix& X, const vector<double>& y, double learning_rate, size_t epochs, size_t mini_batch_size);
 
         // Predict method
         Matrix predict(const Matrix& X) const;
