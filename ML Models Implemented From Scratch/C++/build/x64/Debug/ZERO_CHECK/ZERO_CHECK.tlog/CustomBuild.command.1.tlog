@@ -1,0 +1,10 @@
+^C:\USERS\ANDAR\MACHINE-LEARNING\IMPLEMENTATION FROM SCRATCH\BUILD\CMAKEFILES\D3D2E032BE57E1D1846E940838B0FC6A\GENERATE.STAMP.RULE
+setlocal
+C:\Users\andar\Downloads\cmake-3.30.0-windows-x86_64\cmake-3.30.0-windows-x86_64\bin\cmake.exe "-SC:/Users/andar/Machine-Learning/Implementation From Scratch" "-BC:/Users/andar/Machine-Learning/Implementation From Scratch/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/andar/Machine-Learning/Implementation From Scratch/build/MachineLearningProject.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
